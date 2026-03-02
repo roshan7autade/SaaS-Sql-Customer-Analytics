@@ -1,0 +1,55 @@
+# import sql into python 
+import sqlite3
+
+conn = sqlite3.connect("saas.db")
+
+df.to_sql("customers", conn, if_exists="replace", index=False)
+
+
+# total customers
+pd.read_sql("""
+SELECT COUNT(*) AS total_customers
+FROM customers
+""", conn)
+
+#groupby
+pd.read_sql("""
+SELECT Churn, COUNT(*) AS customer_count
+FROM customers
+GROUP BY Churn
+""", conn)
+
+#where clause
+pd.read_sql("""
+SELECT SUM(MonthlyCharges) AS total_mrr
+FROM customers
+WHERE Churn='No'
+""", conn)
+
+# create visulization 
+import matplotlib.pyplot as plt
+
+# creating new table
+# Create derived customer table
+conn.execute("""
+DROP TABLE IF EXISTS customers_info;
+""")
+
+conn.execute("""
+CREATE TABLE customers_info AS
+SELECT customerID, gender, SeniorCitizen, Partner, Dependents
+FROM customers;
+""")
+
+#inner join
+pd.read_sql("""
+SELECT c.customerID,
+       c.MonthlyCharges,
+       ci.gender,
+       ci.Partner
+FROM customers c
+INNER JOIN customers_info ci
+ON c.customerID = ci.customerID
+LIMIT 10;
+""", conn)
+

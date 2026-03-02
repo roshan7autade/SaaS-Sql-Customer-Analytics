@@ -1,0 +1,6 @@
+# SaaS SQL Analytics Project Dependencies
+
+pandas==2.2.2
+matplotlib==3.8.4
+numpy==1.26.4
+jupyter==1.0.0
